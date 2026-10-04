@@ -54,6 +54,10 @@ export default function taskBase(
           rent.charges.push(
             ...expenses
               .filter(({ beginDate, endDate }) => {
+                // expenses recorded before they had dates always apply
+                if (!(beginDate && endDate)) {
+                  return true;
+                }
                 const expenseBegin = moment(beginDate, 'DD/MM/YYYY').startOf(
                   'day'
                 );

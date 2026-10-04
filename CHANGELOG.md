@@ -24,6 +24,8 @@ All notable changes to this project will be documented here.
 
 - Recording a payment on a rent erased the notes of all the following rents
 
+- Expenses without begin and end dates were left out of the rents
+
 - Recording a payment recomputed weekly, daily and yearly leases on a monthly schedule
 
 - Two payments saved at the same time on a tenant could overwrite each other
