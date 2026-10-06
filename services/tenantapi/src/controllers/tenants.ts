@@ -8,6 +8,51 @@ import {
 } from '@microrealestate/types';
 import moment from 'moment';
 
+type MpesaInfo = NonNullable<TenantAPI.TenantDataType['landlord']['mpesa']>;
+
+/**
+ * Matches a contact email exactly, whatever the case. The email used to be
+ * turned into a regular expression as is, so a tenant signed in with
+ * "ann@example.com" also received the leases of "joann@example.com".
+ */
+function _emailFilter(email: string) {
+  const escaped = email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') };
+}
+
+function _realmIdOf(tenant: CollectionTypes.Tenant) {
+  const realm = tenant.realmId as CollectionTypes.Realm | string;
+  return String(typeof realm === 'string' ? realm : realm?._id);
+}
+
+/** What tenants need to pay by M-Pesa, by organization id. */
+async function _findMpesaInfo(tenants: CollectionTypes.Tenant[]) {
+  const mpesaByRealm = new Map<string, MpesaInfo>();
+  const realmIds = [...new Set(tenants.map(_realmIdOf))];
+  if (!realmIds.length) {
+    return mpesaByRealm;
+  }
+  try {
+    const configs = await Collections.MpesaConfig.find({
+      realmId: { $in: realmIds },
+      enabled: true
+    }).lean();
+    configs.forEach((config) => {
+      if (config.shortCode) {
+        mpesaByRealm.set(String(config.realmId), {
+          shortCode: config.shortCode,
+          shortCodeType: config.shortCodeType,
+          testMode: config.environment !== 'production'
+        });
+      }
+    });
+  } catch (error) {
+    // the lease must stay visible even if the payment details cannot be read
+    logger.error(String(error));
+  }
+  return mpesaByRealm;
+}
+
 export async function getOneTenant(
   request: Express.Request,
   response: Express.Response
@@ -25,7 +70,7 @@ export async function getOneTenant(
     MongooseDocument<CollectionTypes.Tenant>
   >({
     _id: tenantId,
-    'contacts.email': { $regex: new RegExp(email, 'i') }
+    'contacts.email': _emailFilter(email)
   }).populate<{
     realmId: CollectionTypes.Realm;
     leaseId: CollectionTypes.Lease;
@@ -38,8 +83,16 @@ export async function getOneTenant(
   const now = moment();
   const lastTerm = Number(now.format('YYYYMMDDHH'));
 
+  const mpesaByRealm = await _findMpesaInfo([dbTenant]);
+
   res.json({
-    results: [_toTenantResponse(dbTenant, lastTerm)]
+    results: [
+      _toTenantResponse(
+        dbTenant,
+        lastTerm,
+        mpesaByRealm.get(_realmIdOf(dbTenant))
+      )
+    ]
   });
 }
 
@@ -59,7 +112,7 @@ export async function getAllTenants(
   const dbTenants = await Collections.Tenant.find<
     MongooseDocument<CollectionTypes.Tenant>
   >({
-    'contacts.email': { $regex: new RegExp(email, 'i') }
+    'contacts.email': _emailFilter(email)
   }).populate<{
     realmId: CollectionTypes.Realm;
     leaseId: CollectionTypes.Lease;
@@ -68,14 +121,19 @@ export async function getAllTenants(
   // the last term considering the current date
   const lastTerm = Number(moment().format('YYYYMMDDHH'));
 
+  const mpesaByRealm = await _findMpesaInfo(dbTenants);
+
   res.json({
-    results: dbTenants.map((tenant) => _toTenantResponse(tenant, lastTerm))
+    results: dbTenants.map((tenant) =>
+      _toTenantResponse(tenant, lastTerm, mpesaByRealm.get(_realmIdOf(tenant)))
+    )
   });
 }
 
 function _toTenantResponse(
   tenant: CollectionTypes.Tenant,
-  lastTerm: number
+  lastTerm: number,
+  mpesa?: MpesaInfo
 ): TenantAPI.TenantDataType {
   const now = moment();
   const firstRent = tenant.rents?.[0];
@@ -91,6 +149,7 @@ function _toTenantResponse(
     tenant: {
       id: tenant._id,
       name: tenant.name,
+      reference: tenant.reference,
       contacts: tenant.contacts.map((contact) => ({
         name: contact.contact,
         email: contact.email,
@@ -112,7 +171,8 @@ function _toTenantResponse(
       addresses: landlord.addresses,
       contacts: landlord.contacts,
       currency: landlord.currency,
-      locale: landlord.locale
+      locale: landlord.locale,
+      mpesa: mpesa || null
     },
     lease: {
       name: lease.name,

@@ -10,6 +10,10 @@ All notable changes to this project will be documented here.
 
 - Added the "Mobile money (M-Pesa)" payment type
 
+- Added installable web apps for landlords and tenants, see [documentation/MOBILE_APP.md](./documentation/MOBILE_APP.md)
+
+- Added a "Pay with M-Pesa" card in the tenant application
+
 - Added html emails - can have issues in German and Brazilian translations
 
 - Added support of multi expenses in leases #231
@@ -25,6 +29,8 @@ All notable changes to this project will be documented here.
 - Recording a payment on a rent erased the notes of all the following rents
 
 - Expenses without begin and end dates were left out of the rents
+
+- A tenant could see the leases of another tenant whose email address contained their own
 
 - Recording a payment recomputed weekly, daily and yearly leases on a monthly schedule
 

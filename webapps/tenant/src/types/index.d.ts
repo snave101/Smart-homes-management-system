@@ -57,6 +57,11 @@ type Lease = {
     name: string;
     currency: string;
     locale: Locale;
+    mpesa?: {
+      shortCode: string;
+      shortCodeType: 'paybill' | 'till';
+      testMode: boolean;
+    } | null;
     addresses: CollectionTypes.PartAddress[];
     contacts: {
       name: string;
@@ -68,6 +73,7 @@ type Lease = {
   tenant: {
     id: string;
     name: string;
+    reference?: string;
     contacts: {
       name: string;
       email: string;

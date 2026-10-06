@@ -15,6 +15,7 @@ import { Info } from 'lucide-react';
 import { InvoiceTable } from '@/components/invoice-table';
 import { LabelValue } from '@/components/label-value';
 import type { Lease } from '@/types';
+import { MpesaPayCard } from '@/components/mpesa-pay-card';
 
 export async function ContractCard({ lease }: { lease: Lease }) {
   const { locale, t } = await getTranslation();
@@ -98,6 +99,8 @@ export async function ContractCard({ lease }: { lease: Lease }) {
             </Card>
           </div>
         </div>
+
+        <MpesaPayCard lease={lease} />
 
         <div className="flex flex-col content-center gap-6 mb-6 sm:flex-row">
           <Card className="shadow sm:w-1/3">

@@ -11,6 +11,8 @@ export type TenantDataType = {
   tenant: {
     id: string;
     name: string;
+    // what the tenant types as account number when paying
+    reference?: string;
     contacts: {
       name: string;
       email: string;
@@ -22,6 +24,13 @@ export type TenantDataType = {
     name: string;
     currency: string;
     locale: Locale;
+    // set when the landlord accepts M-Pesa payments
+    mpesa?: {
+      shortCode: string;
+      shortCodeType: 'paybill' | 'till';
+      // sandbox short code: real money must not be sent to it
+      testMode: boolean;
+    } | null;
     addresses: CollectionTypes.PartAddress[];
     contacts: {
       name: string;

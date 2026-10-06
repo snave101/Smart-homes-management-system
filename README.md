@@ -18,6 +18,8 @@ MicroRealEstate is an open-source application designed to assist landlords in ma
 
 - M-Pesa payments: rents paid to a Safaricom Paybill or Till number are recorded automatically on the tenant's rent. See [documentation/MPESA.md](./documentation/MPESA.md).
 
+- Installable apps: landlords and tenants can install the application on their phone from the browser. See [documentation/MOBILE_APP.md](./documentation/MOBILE_APP.md).
+
 ## Screenshots
 
 |                                                                                                                           |                                                                                                                                   |                                                                                                                                       |

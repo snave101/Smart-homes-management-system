@@ -7,6 +7,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 import Providers from '@/components/providers';
 import type { ReactNode } from 'react';
 import { Roboto } from 'next/font/google';
+import ServiceWorker from '@/components/service-worker';
 import { Toaster } from '@/components/ui/toaster';
 
 const APP_NAME = process.env.APP_NAME || 'MicroRealEstate';
@@ -43,6 +44,18 @@ export default async function RootLayout({
     <html lang={lang} translate="no" className="overscroll-none">
       <head>
         <link rel="icon" href={`${process.env.BASE_PATH}/favicon.svg`} />
+        {/* installable web app */}
+        <link
+          rel="manifest"
+          href={`${process.env.BASE_PATH || ''}/manifest.webmanifest`}
+        />
+        <link
+          rel="apple-touch-icon"
+          href={`${process.env.BASE_PATH || ''}/icons/apple-touch-icon.png`}
+        />
+        <meta name="theme-color" content="#0f766e" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <EnvScript
           env={{
             NEXT_PUBLIC_APP_NAME: process.env.APP_NAME || 'MicroRealEstate',
@@ -60,6 +73,7 @@ export default async function RootLayout({
           {children}
           <Toaster />
         </Providers>
+        <ServiceWorker />
       </body>
     </html>
   );

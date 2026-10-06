@@ -68,6 +68,17 @@ function MyApp(props) {
     }
   }, []);
 
+  useEffect(() => {
+    // makes the app installable; only works over https or on localhost
+    if ('serviceWorker' in navigator && config.NODE_ENV !== 'development') {
+      navigator.serviceWorker
+        .register(`${config.BASE_PATH}/sw.js`, {
+          scope: `${config.BASE_PATH}/`
+        })
+        .catch((error) => console.warn('service worker not registered', error));
+    }
+  }, []);
+
   return (
     <>
       <Head>
@@ -79,6 +90,17 @@ function MyApp(props) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
         <link rel="shortcut icon" href={`${config.BASE_PATH}/favicon.svg`} />
+        {/* installable web app */}
+        <link
+          rel="manifest"
+          href={`${config.BASE_PATH}/manifest.webmanifest`}
+        />
+        <link
+          rel="apple-touch-icon"
+          href={`${config.BASE_PATH}/icons/apple-touch-icon.png`}
+        />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
       </Head>
       <main className={roboto.className}>
         <ThemeProvider theme={theme}>

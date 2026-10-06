@@ -58,5 +58,22 @@
   "unpaid": "não pago",
   "Verification": "Veficação",
   "Your email": "Seu email",
-  "mobile_money": "dinheiro móvel"
+  "mobile_money": "dinheiro móvel",
+  "Pay with M-Pesa": "Pay with M-Pesa",
+  "Pay Bill": "Pay Bill",
+  "Buy Goods and Services": "Buy Goods and Services",
+  "Business number": "Business number",
+  "Till number": "Till number",
+  "Account number": "Account number",
+  "Amount": "Amount",
+  "Amount due: {{amount}}": "Amount due: {{amount}}",
+  "Open M-Pesa on your phone and choose Lipa na M-Pesa, then {{option}}": "Open M-Pesa on your phone and choose Lipa na M-Pesa, then {{option}}",
+  "Enter your M-Pesa PIN and confirm": "Enter your M-Pesa PIN and confirm",
+  "Your payment will appear here a few minutes after M-Pesa confirms it": "Your payment will appear here a few minutes after M-Pesa confirms it",
+  "Tell your landlord after paying: a till payment carries no account number": "Tell your landlord after paying: a till payment carries no account number",
+  "Test mode: do not send real money to this number": "Test mode: do not send real money to this number",
+  "Copy": "Copy",
+  "Copied": "Copied",
+  "Nothing is due at the moment": "Nothing is due at the moment",
+  "You can pay a different amount: it is added to your balance": "You can pay a different amount: it is added to your balance"
 }
